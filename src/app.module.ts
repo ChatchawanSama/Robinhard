@@ -8,15 +8,17 @@ import { User } from './users/user.model';
 import { UsersController } from './users/users.controller';
 import { UsersService } from './users/users.service';
 
+require('dotenv').config(); // Import and configure dotenv
+
 @Module({
   imports: [
     SequelizeModule.forRoot({
       dialect: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'keep1234',
-      database: 'keeplearning',
+      host: process.env.DB_HOST,
+      port: +process.env.DB_PORT,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
       autoLoadModels: true,
       synchronize: true,
       models: [User]

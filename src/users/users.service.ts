@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'sequelize-typescript';
 import { User } from './user.model';
 
 @Injectable()
@@ -15,8 +17,8 @@ export class UsersService {
     return Promise.resolve(user);
   }
 
-  async create(user: User): Promise<User> {
-    return this.userModel.create(user)
+  createUser(user: User){
+    this.users.push(user);
   }
 
   async update(id: number, newUser: User): Promise<User> {
