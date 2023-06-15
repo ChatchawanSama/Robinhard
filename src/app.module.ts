@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Sequelize } from 'sequelize';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { User } from './users/user.model';
-import { UsersController } from './users/users.controller';
-import { UsersService } from './users/users.service';
+import { Module } from "@nestjs/common";
+import { SequelizeModule } from "@nestjs/sequelize";
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+import { User } from "./users/user.model";
+import { UsersController } from "./users/users.controller";
+import { UsersModule } from "./users/users.module";
+import { UsersService } from "./users/users.service";
+
 
 require('dotenv').config(); // Import and configure dotenv
 
@@ -19,10 +19,12 @@ require('dotenv').config(); // Import and configure dotenv
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
+      models: [User],
       autoLoadModels: true,
       synchronize: true,
-      models: [User]
     }),
+    // UsersModule
+    SequelizeModule.forFeature([User]),
   ],
   controllers: [AppController, UsersController],
   providers: [AppService, UsersService],

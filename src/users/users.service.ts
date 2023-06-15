@@ -1,10 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'sequelize-typescript';
 import { User } from './user.model';
 
 @Injectable()
 export class UsersService {
+  // constructor(
+  //   @InjectRepository(User)
+  //   private readonly userRepository: Repository<User>,
+  // ) {}
+
+  constructor(@InjectModel(User) private dataModel: typeof User) {}
+
   private users: User[] = [];
     userModel: any;
 
@@ -17,8 +25,11 @@ export class UsersService {
     return Promise.resolve(user);
   }
 
-  createUser(user: User){
-    this.users.push(user);
+  // createUser(user: User){
+  //   this.users.push(user);
+  // }
+  async saveData(data: User): Promise<User> {
+    return this.dataModel.create(data);
   }
 
   async update(id: number, newUser: User): Promise<User> {
