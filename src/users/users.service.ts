@@ -11,10 +11,10 @@ export class UsersService {
   //   private readonly userRepository: Repository<User>,
   // ) {}
 
-  constructor(@InjectModel(User) private dataModel: typeof User) {}
+  constructor(@InjectModel(User) private userModel: typeof User) {}
 
   private users: User[] = [];
-    userModel: any;
+    // userModel: any;
 
   findAll(): Promise<User[]> {
     return Promise.resolve(this.users);
@@ -28,8 +28,23 @@ export class UsersService {
   // createUser(user: User){
   //   this.users.push(user);
   // }
+  // async saveData(data: User): Promise<User> {
+  //   // console.log(data.name)
+  //   this.users.push(data);
+  //   return this.userModel.create(data);
+  // }
   async saveData(data: User): Promise<User> {
-    return this.dataModel.create(data);
+    this.users.push(data); // Assuming this is for an in-memory storage or additional data manipulation
+    
+    // Create a new instance of the User model and assign the values from the data object
+    const newUser = new User();
+    newUser.name = data.name;
+    newUser.email = data.email;
+    
+    // Save the new user record to the database
+    await newUser.save();
+    
+    return newUser; // Return the newly saved user object
   }
 
   async update(id: number, newUser: User): Promise<User> {

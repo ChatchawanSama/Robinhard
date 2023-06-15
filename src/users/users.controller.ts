@@ -27,7 +27,6 @@ export class UsersController {
         const user = new User();
         user.name = createUserDto.name;
         user.email = createUserDto.email;
-
         return this.userService.saveData(user);
     }
    
