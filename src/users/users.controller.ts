@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+// import { AuthGuard } from '@nestjs/passport';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
-import { CreateUserDto } from './CreateUser.dto';
+// import { CreateUserDto } from './CreateUser.dto'; 
 import { UpdateUserDto } from './UpdateUser.dto';
 import { User } from './user.model';
 import { UsersService } from './users.service';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @ApiTags('users')
 @Controller('users')
@@ -11,6 +13,7 @@ export class UsersController {
     constructor(private userService: UsersService) {}
     
     @Get()
+    @UseGuards(JwtAuthGuard)
     async getAllData(): Promise<User[]> {
         return this.userService.getAllData();
     }
@@ -21,6 +24,7 @@ export class UsersController {
     }
    
     @Post('/create')
+    @UseGuards(JwtAuthGuard)
     create(@Body() createUserDto: User): Promise<User> {
         const user = new User();
         user.name = createUserDto.name;
