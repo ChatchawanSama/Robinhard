@@ -2,37 +2,23 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'sequelize-typescript';
+import { UpdateUserDto } from './UpdateUser.dto';
 import { User } from './user.model';
 
 @Injectable()
 export class UsersService {
-  // constructor(
-  //   @InjectRepository(User)
-  //   private readonly userRepository: Repository<User>,
-  // ) {}
-
   constructor(@InjectModel(User) private userModel: typeof User) {}
 
   private users: User[] = [];
-    // userModel: any;
 
-  findAll(): Promise<User[]> {
-    return Promise.resolve(this.users);
+  async getAllData(): Promise<User[]> {
+    return this.userModel.findAll();
   }
 
-  findOne(id: number): Promise<User> {
-    const user = this.users.find((user) => user.id === id);
-    return Promise.resolve(user);
-  }
+  async getDataById(id: number): Promise<User> {
+    return this.userModel.findByPk(id);
+  }  
 
-  // createUser(user: User){
-  //   this.users.push(user);
-  // }
-  // async saveData(data: User): Promise<User> {
-  //   // console.log(data.name)
-  //   this.users.push(data);
-  //   return this.userModel.create(data);
-  // }
   async saveData(data: User): Promise<User> {
     this.users.push(data); // Assuming this is for an in-memory storage or additional data manipulation
     
@@ -47,25 +33,30 @@ export class UsersService {
     return newUser; // Return the newly saved user object
   }
 
-  async update(id: number, newUser: User): Promise<User> {
-    await this.userModel.update(newUser, {
-        where: {
-            id,
-        },
-    });
-    const user = this.findOne(id);
-    return user;
+  async updateUser(id: number, updateUserDto: UpdateUserDto) {
+    const data = await this.userModel.findByPk(id);
+    if (!data) {
+      throw new Error('Data not found');
+    }
+
+    // Update the fields with the values from the updateDataDto
+    data.name = updateUserDto.name;
+    data.email = updateUserDto.email;
+
+    await data.save(); // Save the updated data to the database
+
+    return data;
   }
 
-  
-  async destroy(id: number): Promise<User> {
-    const user = this.findOne(id);
-    this.userModel.destroy({
-        where: {
-            id,
-        },
-    });
-    return user;
+  async deleteData(id: number) {
+    const data = await this.userModel.findByPk(id);
+    if (!data) {
+      throw new Error('Data not found');
+    }
+
+    await data.destroy(); // Delete the data from the database
+
+    return { message: 'Data deleted successfully' };
   }
- 
+  
 }
