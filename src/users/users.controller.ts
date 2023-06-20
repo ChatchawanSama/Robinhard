@@ -5,7 +5,7 @@ import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { UpdateUserDto } from './UpdateUser.dto';
 import { User } from './user.model';
 import { UsersService } from './users.service';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('users')
 @Controller('users')
@@ -19,6 +19,7 @@ export class UsersController {
     }
 
     @Get(':id')
+    @UseGuards(JwtAuthGuard)
     async getDataById(@Param('id') id: number): Promise<User> {
       return this.userService.getDataById(id);
     }
@@ -34,11 +35,13 @@ export class UsersController {
     }
 
     @Put(':id')
+    @UseGuards(JwtAuthGuard)
     async updateData(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
         return this.userService.updateUser(id, updateUserDto);
     }
 
     @Delete(':id')
+    @UseGuards(JwtAuthGuard)
     async deleteData(@Param('id') id: number) {
       return this.userService.deleteData(id);
     }
