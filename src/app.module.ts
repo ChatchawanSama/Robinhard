@@ -1,9 +1,11 @@
 import { Module } from "@nestjs/common";
+import { APP_FILTER } from "@nestjs/core";
 import { JwtModule } from "@nestjs/jwt";
 import { SequelizeModule } from "@nestjs/sequelize";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { JwtAuthGuard, JwtStrategy } from "./auth/jwt-auth.guard";
+import { WrapExceptionFilter } from "./exception.filter";
 import { User } from "./users/user.model";
 import { UsersController } from "./users/users.controller";
 import { UsersModule } from "./users/users.module";
@@ -25,7 +27,7 @@ require('dotenv').config(); // Import and configure dotenv
       autoLoadModels: true,
       synchronize: true,
     }),
-    // UsersModule
+    // UsersModule,
     SequelizeModule.forFeature([User]),
     
     JwtModule.register({
@@ -34,6 +36,11 @@ require('dotenv').config(); // Import and configure dotenv
     }),
   ],
   controllers: [AppController, UsersController],
-  providers: [AppService, UsersService, JwtAuthGuard, JwtStrategy],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: WrapExceptionFilter,
+    },
+    AppService, UsersService, JwtAuthGuard, JwtStrategy, ],
 }) 
 export class AppModule {}

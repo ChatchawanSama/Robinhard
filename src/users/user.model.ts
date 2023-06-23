@@ -16,3 +16,4 @@ export class User extends Model<User> {
     @ApiProperty()
     email: string;
 }
+// Validate body request 

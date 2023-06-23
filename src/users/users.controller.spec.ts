@@ -7,6 +7,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UsersModule } from './users.module';
 import { CreateUserDto } from './CreateUser.dto';
 import { AppModule } from '../app.module';
+import { MyCustomException } from '../my-custom.exception';
 
 
 describe('UsersController', () => {
@@ -17,7 +18,7 @@ describe('UsersController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
       providers: [UsersService, JwtAuthGuard], // Include JwtAuthGuard in providers
-      imports: [ AppModule ,UsersModule, User, CreateUserDto, UpdateUserDto], // Import the module containing UserRepository
+      imports: [ AppModule ,UsersModule, User, CreateUserDto, UpdateUserDto, MyCustomException], // Import the module containing UserRepository
 
     }).compile();
   

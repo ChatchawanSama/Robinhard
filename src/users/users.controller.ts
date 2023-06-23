@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 // import { AuthGuard } from '@nestjs/passport';
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 // import { CreateUserDto } from './CreateUser.dto'; 
@@ -6,9 +6,12 @@ import { UpdateUserDto } from './UpdateUser.dto';
 import { User } from './user.model';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CreateUserDto } from './CreateUser.dto';
+import { WrapExceptionFilter } from '../exception.filter';
 
 @ApiTags('users')
 @Controller('users')
+@UseFilters(WrapExceptionFilter)
 export class UsersController {
     constructor(private userService: UsersService) {}
     
@@ -24,14 +27,24 @@ export class UsersController {
       return this.userService.getDataById(id);
     }
    
+    // @Post('/create')
+    // @UseGuards(JwtAuthGuard)
+    // create(@Body() createUserDto: User): Promise<User> {
+    //     const user = new User();
+    //     user.name = createUserDto.name;
+    //     user.email = createUserDto.email;
+        
+    //     return this.userService.saveData(user);
+    // }
     @Post('/create')
     @UseGuards(JwtAuthGuard)
-    create(@Body() createUserDto: User): Promise<User> {
-        const user = new User();
-        user.name = createUserDto.name;
-        user.email = createUserDto.email;
-        
-        return this.userService.saveData(user);
+    @UsePipes(new ValidationPipe()) // Apply the ValidationPipe
+    async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+      const user = new User();
+      user.name = createUserDto.name;
+      user.email = createUserDto.email;
+      
+      return this.userService.saveData(user);
     }
 
     @Put(':id')
