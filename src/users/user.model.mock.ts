@@ -1,4 +1,4 @@
-import { User } from './user.model';
+import { User } from './entities/user.entity';
 
 export class UserMock extends User {
   // Additional properties or methods can be added here

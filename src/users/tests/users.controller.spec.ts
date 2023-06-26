@@ -1,9 +1,20 @@
 import { getModelToken } from '@nestjs/sequelize';
 import { Test } from '@nestjs/testing';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
-import { User } from './user.model';
-import { UserMock } from './user.mock'
+import { UsersController } from '../users.controller';
+import { UsersService } from '../users.service';
+import { User } from '../entities/user.entity';
+// import { UserMock } from './user.mock'
+
+// Mock User class
+class UserMock {
+  public id: number;
+  public name: string;
+  public email: string;
+
+  public save(): Promise<UserMock> {
+    return Promise.resolve(this);
+  }
+}
 
 describe('UsersController', () => {
     let usersController: UsersController;
@@ -30,6 +41,10 @@ describe('UsersController', () => {
               save: jest.fn(),
               destroy: jest.fn(),
             },
+          },
+          {
+            provide: User,
+            useValue: UserMock, // Use the UserMock class as the mock value
           },
         ],
       }).compile();
@@ -65,19 +80,6 @@ describe('UsersController', () => {
       });
     });
   
-    // describe('create', () => {
-    //   it('should create a new user', async () => {
-    //     const createUserDto = { name: 'John', email: 'john@example.com' };
-    //     const createdUser = { id: 1, ...createUserDto };
-  
-    //     jest.spyOn(usersService, 'saveData').mockResolvedValue(createdUser as any);
-  
-    //     const result = await usersController.create(createUserDto);
-  
-    //     expect(result).toEqual(createdUser);
-    //   });
-    // });
-  
     describe('deleteData', () => {
       it('should delete the user with the given ID', async () => {
         const deleteResult = { message: 'User deleted successfully' };
@@ -89,27 +91,6 @@ describe('UsersController', () => {
         expect(result).toEqual(deleteResult);
       });
     });
-
-    // describe('create', () => {
-    //     it('should create a new user', async () => {
-    //       const createUserDto = { name: 'John', email: 'john@example.com' };
-    //       const createdUser: Partial<User> = {
-    //         id: 1,
-    //         name: createUserDto.name,
-    //         email: createUserDto.email,
-    //       };
-    
-    //       jest.spyOn(usersService, 'saveData').mockResolvedValue(createdUser as User);
-    //       jest.spyOn(usersService, 'getDataById').mockResolvedValue(createdUser as User);
-    
-    //       const result = await usersController.create(createUserDto);
-    
-    //       expect(result).toEqual(createdUser);
-    //       expect(usersService.saveData).toHaveBeenCalledWith(createUserDto);
-    //       expect(usersService.getDataById).toHaveBeenCalledWith(createdUser.id);
-    //     });
-    //   });
-      
    
     interface MockUser {
         id: number;
@@ -119,27 +100,22 @@ describe('UsersController', () => {
       
       describe('create', () => {
         it('should create a new user', async () => {
-          // Mock data
           const createUserDto = { name: 'John', email: 'john@example.com' };
-          const createdUser: MockUser = {
+    
+          jest.spyOn(usersService, 'saveData').mockResolvedValue({
             id: 1,
             name: 'John',
-            email: 'john@example.com',
-          };
-      
-        //   // Mock the behavior of the UsersService
-        //   jest.spyOn(usersService, 'saveData').mockImplementation(async () => createdUser as any);
-        //   jest.spyOn(usersService, 'getDataById').mockImplementation(async () => createdUser as any);
-      
-        //   // Call the create method
-        //   const result = await usersController.create(createUserDto);
-      
-        //   // Assertions
-        //   expect(result).toEqual(createdUser);
-        //   expect(usersService.saveData).toHaveBeenCalledWith(createUserDto);
-        //   expect(usersService.getDataById).toHaveBeenCalledWith(createdUser.id);
+            email: 'john@example.com'
+          });
+          const result = await usersController.create(createUserDto);
+    
+          expect(result).toEqual(expect.objectContaining({
+            id: expect.any(Number),
+            name: createUserDto.name,
+            email: createUserDto.email,
+          }));
         });
-      });
+      });    
       
       describe('updateUser', () => {
         it('should update the user with the given ID', async () => {

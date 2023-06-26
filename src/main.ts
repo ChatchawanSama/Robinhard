@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { Sequelize } from 'sequelize-typescript';
-import { User } from './users/user.model';
+import { User } from './users/entities/user.entity';
 import { WrapExceptionFilter } from './exception.filter';
 
 async function bootstrap() {

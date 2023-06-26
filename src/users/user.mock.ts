@@ -1,3 +1,7 @@
-import { User } from './user.model';
+import { User } from './entities/user.entity';
 
-export class UserMock extends User {}
+export class UserMock extends User {
+    id: number;
+    name: string;
+    email: string;
+}

@@ -3,11 +3,13 @@ import { Body, Controller, Delete, Get, Param, Post, Put, UseFilters, UseGuards,
 import { ApiParam, ApiTags } from '@nestjs/swagger';
 // import { CreateUserDto } from './CreateUser.dto'; 
 import { UpdateUserDto } from './UpdateUser.dto';
-import { User } from './user.model';
+import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateUserDto } from './CreateUser.dto';
 import { WrapExceptionFilter } from '../exception.filter';
+import { UserCreateRequest } from './models/requests/user-create.request';
+import { UserCreateResponse } from './models/responses/user-create.response';
 
 @ApiTags('users')
 @Controller('users')
@@ -39,12 +41,17 @@ export class UsersController {
     @Post('/create')
     @UseGuards(JwtAuthGuard)
     @UsePipes(new ValidationPipe()) // Apply the ValidationPipe
-    async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-      const user = new User();
-      user.name = createUserDto.name;
-      user.email = createUserDto.email;
+    async create(@Body() request: UserCreateRequest): Promise<UserCreateResponse> {
+      // const user = 
+      // request.name = UserCreateRequest.name;
+      // request.email = UserCreateRequest.email;
+      const user: UserCreateRequest = {
+        name: request.name,
+        email: request.email
+      };
+    
       
-      return this.userService.saveData(user);
+      return this.userService.saveData(request);
     }
 
     @Put(':id')

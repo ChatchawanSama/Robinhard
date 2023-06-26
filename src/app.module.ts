@@ -6,7 +6,7 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { JwtAuthGuard, JwtStrategy } from "./auth/jwt-auth.guard";
 import { WrapExceptionFilter } from "./exception.filter";
-import { User } from "./users/user.model";
+import { User } from "./users/entities/user.entity";
 import { UsersController } from "./users/users.controller";
 import { UsersModule } from "./users/users.module";
 import { UsersService } from "./users/users.service";

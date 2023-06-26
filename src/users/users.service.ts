@@ -3,10 +3,12 @@ import { InjectModel } from '@nestjs/sequelize';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'sequelize-typescript';
 import { UpdateUserDto } from './UpdateUser.dto';
-import { User } from './user.model';
+import { User } from './entities/user.entity';
 import { ValidationPipe } from '@nestjs/common';
 import { CreateUserDto } from './CreateUser.dto';
 import { MyCustomException } from '../my-custom.exception';
+import { UserCreateRequest } from './models/requests/user-create.request';
+import { UserCreateResponse } from './models/responses/user-create.response';
 
 @Injectable()
 export class UsersService {
@@ -22,16 +24,22 @@ export class UsersService {
     return this.userModel.findByPk(id);
   }  
 
-  async saveData(data: CreateUserDto): Promise<User> {
+  async saveData(request: UserCreateRequest): Promise<UserCreateResponse> {
     // Create a new instance of the User model and assign the values from the data object
-    const newUser = new User();
-    newUser.name = data.name;
-    newUser.email = data.email;
+    const user = new User({ 
+      name: request.name, email: request.email
+    });
+    // user.name = request.name;
+    // user.email = request.email;
     
     // Save the new user record to the database
-    await newUser.save();
+    const createUser = await user.save();
     
-    return newUser; // Return the newly saved user object
+    return {
+      id: createUser.id,
+      name: createUser.name,
+      email: createUser.email
+    };
   }
   
 
